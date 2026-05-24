@@ -54,6 +54,7 @@ public class Downloader implements Runnable {
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             connection.setRequestProperty("Referer", "https://www.google.com");
             connection.setRequestProperty("Accept", "application/octet-stream,*/*");
+            connection.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
             connection.setRequestProperty("Range", "bytes=" + startByte + "-" + endByte);
 
             // 206 = server supports range requests

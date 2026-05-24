@@ -69,6 +69,7 @@ public class DownloadInfo {
             conn.setRequestMethod("GET");
             conn.setInstanceFollowRedirects(true);
             conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+            conn.setRequestProperty("Referer", "https://www.google.com");
             conn.setRequestProperty("Accept", "application/octet-stream,*/*");
             conn.connect();
 
