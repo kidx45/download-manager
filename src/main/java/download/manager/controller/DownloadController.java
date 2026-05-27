@@ -42,6 +42,7 @@ public class DownloadController implements Initializable {
     @FXML private Label Page_Name;
     @FXML private VBox downloadsView;
     @FXML private VBox settingsView;
+    @FXML private VBox aboutView;
 
     @FXML private TextField savePathField;
     @FXML private RadioButton lightThemeRadio;
@@ -861,27 +862,28 @@ public class DownloadController implements Initializable {
     // NAVIGATION
     // =========================================================
 
-    @FXML
-    public void onDownloadsNavClicked() {
-
-        downloadsView.setVisible(true);
-        downloadsView.setManaged(true);
-
+    private void hideAllViews() {
+        downloadsView.setVisible(false);
+        downloadsView.setManaged(false);
         settingsView.setVisible(false);
         settingsView.setManaged(false);
+        aboutView.setVisible(false);
+        aboutView.setManaged(false);
+    }
 
+    @FXML
+    public void onDownloadsNavClicked() {
+        hideAllViews();
+        downloadsView.setVisible(true);
+        downloadsView.setManaged(true);
         Page_Name.setText("Downloads");
     }
 
     @FXML
     public void onSettingsNavClicked() {
-
-        downloadsView.setVisible(false);
-        downloadsView.setManaged(false);
-
+        hideAllViews();
         settingsView.setVisible(true);
         settingsView.setManaged(true);
-
         Page_Name.setText("Settings");
 
         savePathField.setText(
@@ -893,13 +895,18 @@ public class DownloadController implements Initializable {
                 download.manager.config.SettingsManager
                         .getTheme()
         )) {
-
             darkThemeRadio.setSelected(true);
-
         } else {
-
             lightThemeRadio.setSelected(true);
         }
+    }
+
+    @FXML
+    public void onAboutNavClicked() {
+        hideAllViews();
+        aboutView.setVisible(true);
+        aboutView.setManaged(true);
+        Page_Name.setText("About");
     }
 
     // =========================================================
