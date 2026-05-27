@@ -51,6 +51,16 @@ public class SettingsManager {
     public static void applyTheme(javafx.scene.Scene scene) {
         String theme = getTheme();
         scene.getStylesheets().clear();
+
+        try {
+            String baseCssPath = SettingsManager.class
+                    .getResource("/css/app.css")
+                    .toExternalForm();
+            scene.getStylesheets().add(baseCssPath);
+        } catch (Exception e) {
+            System.out.println("✗ Failed to apply base stylesheet: " + e.getMessage());
+        }
+
         if ("dark".equals(theme)) {
             try {
                 String cssPath = SettingsManager.class.getResource("/css/dark.css").toExternalForm();
