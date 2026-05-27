@@ -4,3 +4,4 @@ target/
 .idea/
 .vscode
 *.pdf
+*.properties

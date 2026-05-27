@@ -2,23 +2,21 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<!-- COMMENT: Imports geometry Insets -->
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="download.manager.controller.DownloadController"
             prefWidth="880" prefHeight="580">
 
-    <!-- TOP: Controls Toolbar -->
+    <!-- TOP: Simple Page Header -->
     <top>
         <HBox spacing="10" alignment="CENTER_LEFT">
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
             <children>
-                <Label text="URL:"/>
-                <TextField fx:id="urlField" promptText="Paste download URL here..." HBox.hgrow="ALWAYS"/>
-                <Button fx:id="startBtn" text="Start Download" onAction="#onStartClicked"/>
-                <Button fx:id="refreshBtn" text="Refresh" onAction="#onRefreshClicked"/>
+                <Label fx:id="Page_Name" text="Downloads" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
             </children>
         </HBox>
     </top>
@@ -31,38 +29,96 @@
             </padding>
             <children>
                 <Label text="Navigation" style="-fx-font-weight: bold;"/>
-                <Button text="Downloads" maxWidth="Infinity" alignment="BASELINE_LEFT"/>
-                <Button text="Settings" maxWidth="Infinity" alignment="BASELINE_LEFT"/>
+                <Button text="Downloads" maxWidth="Infinity" alignment="BASELINE_LEFT" onAction="#onDownloadsNavClicked"/>
+                <Button text="Settings" maxWidth="Infinity" alignment="BASELINE_LEFT" onAction="#onSettingsNavClicked"/>
                 <Button text="About" maxWidth="Infinity" alignment="BASELINE_LEFT"/>
             </children>
         </VBox>
     </left>
 
-    <!-- CENTER: Main Data Panel -->
+    <!-- CENTER: Main Content Pane (StackPane swaps children) -->
     <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
+        <StackPane>
             <children>
-                <VBox spacing="5">
+                <!-- Downloads View -->
+                <VBox fx:id="downloadsView" spacing="10">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
                     <children>
-                        <Label text="Progress:"/>
-                        <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity"/>
+                        <!-- URL Input Toolbar only visible inside Downloads view -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="URL:"/>
+                                <TextField fx:id="urlField" promptText="Paste download URL here..." HBox.hgrow="ALWAYS"/>
+                                <Button fx:id="startBtn" text="Start Download" onAction="#onStartClicked"/>
+                                <Button fx:id="refreshBtn" text="Refresh" onAction="#onRefreshClicked"/>
+                            </children>
+                        </HBox>
+
+                        <VBox spacing="5">
+                            <children>
+                                <Label text="Progress:"/>
+                                <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity"/>
+                            </children>
+                        </VBox>
+
+                        <TableView fx:id="table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="idCol"       text="ID"       prefWidth="40"/>
+                                <TableColumn fx:id="fileCol"     text="File"     prefWidth="180"/>
+                                <TableColumn fx:id="statusCol"   text="Status"   prefWidth="100"/>
+                                <TableColumn fx:id="progressCol" text="Progress" prefWidth="70"/>
+                                <TableColumn fx:id="urlCol"      text="URL"      prefWidth="250"/>
+                                <TableColumn fx:id="actionsCol"  text="Actions"  prefWidth="100"/>
+                            </columns>
+                        </TableView>
                     </children>
                 </VBox>
-                <TableView fx:id="table" VBox.vgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="idCol"       text="ID"       prefWidth="40"/>
-                        <TableColumn fx:id="fileCol"     text="File"     prefWidth="180"/>
-                        <TableColumn fx:id="statusCol"   text="Status"   prefWidth="100"/>
-                        <TableColumn fx:id="progressCol" text="Progress" prefWidth="70"/>
-                        <TableColumn fx:id="urlCol"      text="URL"      prefWidth="250"/>
-                        <TableColumn fx:id="actionsCol"  text="Actions"  prefWidth="100"/>
-                    </columns>
-                </TableView>
+
+                <!-- Settings View -->
+                <VBox fx:id="settingsView" spacing="15" visible="false" managed="false">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+                    <children>
+                        <Label text="Download Settings" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        
+                        <!-- Save Path Selection -->
+                        <VBox spacing="5">
+                            <children>
+                                <Label text="Default Save Location:" style="-fx-font-weight: bold;"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <children>
+                                        <TextField fx:id="savePathField" HBox.hgrow="ALWAYS" editable="false"/>
+                                        <Button text="Browse..." onAction="#onBrowseSavePathClicked"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- Theme Selection -->
+                        <VBox spacing="5">
+                            <children>
+                                <Label text="Appearance Theme:" style="-fx-font-weight: bold;"/>
+                                <RadioButton fx:id="lightThemeRadio" text="Light Mode" selected="true">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="themeGroup"/>
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton fx:id="darkThemeRadio" text="Dark Mode">
+                                    <toggleGroup>
+                                        <fx:reference source="themeGroup"/>
+                                    </toggleGroup>
+                                </RadioButton>
+                            </children>
+                        </VBox>
+                        
+                        <Button text="Save Settings" onAction="#onSaveSettingsClicked" style="-fx-font-weight: bold;"/>
+                    </children>
+                </VBox>
             </children>
-        </VBox>
+        </StackPane>
     </center>
 
     <!-- BOTTOM: Status Bar -->

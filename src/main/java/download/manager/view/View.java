@@ -16,6 +16,10 @@ public class View extends Application {
         Scene scene = new Scene(loader.load());
         window.setTitle("Download Manager");
         window.setScene(scene);
+        
+        // Apply saved theme
+        download.manager.config.SettingsManager.applyTheme(scene);
+        
         window.show();
     }
 

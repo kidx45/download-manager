@@ -36,20 +36,24 @@ public class DownloadInfo {
     private volatile boolean paused = false;
     private final Object pauseLock = new Object();
 
+    private String savePath;
+
     // ─── Constructor for NEW download ─────────────────────────
     public DownloadInfo(String downloadUrl, DAO dao) {
         this.downloadUrl = downloadUrl;
         this.dao = dao;
         this.downloadId = -1;
         this.startFromByte = 0;
+        this.savePath = null;
     }
 
     // ─── Constructor for RESUMING existing download ───────────
-    public DownloadInfo(String downloadUrl, DAO dao, int existingId, long bytesAlreadyDownloaded) {
+    public DownloadInfo(String downloadUrl, DAO dao, int existingId, long bytesAlreadyDownloaded, String savePath) {
         this.downloadUrl = downloadUrl;
         this.dao = dao;
         this.downloadId = existingId;
         this.startFromByte = bytesAlreadyDownloaded;
+        this.savePath = savePath;
     }
 
     // Getters for pause used by Downloader threads
@@ -91,10 +95,25 @@ public class DownloadInfo {
             }
             System.out.printf("Size: %.2f MB%n", fileSize / (1024.0 * 1024.0));
 
+            // Determine save path
+            String saveDir = download.manager.config.SettingsManager.getSavePath();
+            java.io.File file;
+            if (downloadId == -1) {
+                file = new java.io.File(saveDir, fileName);
+                savePath = file.getAbsolutePath();
+            } else {
+                if (savePath == null || savePath.isEmpty()) {
+                    file = new java.io.File(saveDir, fileName);
+                    savePath = file.getAbsolutePath();
+                } else {
+                    file = new java.io.File(savePath);
+                }
+            }
+
             // STEP 3: Only insert to DB if this is a NEW download
             // If resuming, we already have an ID
             if (downloadId == -1) {
-                Download download = new Download(downloadUrl, fileName, fileSize, fileName);
+                Download download = new Download(downloadUrl, fileName, fileSize, savePath);
                 downloadId = dao.addDownload(download);
                 if (downloadId == -1) {
                     System.out.println("✗ Failed to save to DB.");
@@ -107,7 +126,7 @@ public class DownloadInfo {
 
             // STEP 5: Open output file
             // If resuming, don't reset the file — keep existing bytes
-            RandomAccessFile outputFile = new RandomAccessFile(fileName, "rw");
+            RandomAccessFile outputFile = new RandomAccessFile(file, "rw");
             if (startFromByte == 0) {
                 // New download — pre-allocate full file size
                 outputFile.setLength(fileSize);
