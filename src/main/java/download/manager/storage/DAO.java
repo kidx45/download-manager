@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 // STORAGE: All database operations for downloads table
-// DAO = Data Access Object — one place for all SQL queries
 public class DAO {
 
     private Connection connection;
@@ -19,8 +18,8 @@ public class DAO {
 
     // INSERT a new download, returns the generated ID
     public int addDownload(Download download) {
-        String sql = "INSERT INTO downloads (url, file_name, file_size, status, progress, save_path) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO downloads (url, file_name, file_size, status, progress, save_path, bytes_downloaded, is_resumable) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, download.getUrl());
             stmt.setString(2, download.getFileName());
@@ -28,6 +27,8 @@ public class DAO {
             stmt.setString(4, download.getStatus());
             stmt.setDouble(5, download.getProgress());
             stmt.setString(6, download.getSavePath());
+            stmt.setLong(7, 0);
+            stmt.setBoolean(8, false);
             stmt.executeUpdate();
 
             ResultSet keys = stmt.getGeneratedKeys();
@@ -40,7 +41,7 @@ public class DAO {
         return -1;
     }
 
-    // UPDATE status (PENDING, DOWNLOADING, PAUSED, COMPLETED, FAILED)
+    // UPDATE status
     public void updateStatus(int id, String status) {
         String sql = "UPDATE downloads SET status = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -52,7 +53,7 @@ public class DAO {
         }
     }
 
-    // UPDATE progress (0.0 to 100.0)
+    // UPDATE progress
     public void updateProgress(int id, double progress) {
         String sql = "UPDATE downloads SET progress = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -61,6 +62,32 @@ public class DAO {
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("✗ updateProgress failed: " + e.getMessage());
+        }
+    }
+
+    // SAVE bytes downloaded when paused so we can resume later
+    public void updateBytesDownloaded(int id, long bytes) {
+        String sql = "UPDATE downloads SET bytes_downloaded = ?, is_resumable = TRUE WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, bytes);
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+            System.out.println("✓ Saved pause state at " + bytes + " bytes");
+        } catch (SQLException e) {
+            System.out.println("✗ updateBytesDownloaded failed: " + e.getMessage());
+        }
+    }
+
+    // MARK as completed — disables resume
+    public void markCompleted(int id) {
+        String sql = "UPDATE downloads SET status = 'COMPLETED', progress = 100.0, " +
+                     "is_resumable = FALSE WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            System.out.println("✓ Download " + id + " marked as COMPLETED");
+        } catch (SQLException e) {
+            System.out.println("✗ markCompleted failed: " + e.getMessage());
         }
     }
 
@@ -81,11 +108,25 @@ public class DAO {
                 d.setStatus(rs.getString("status"));
                 d.setProgress(rs.getDouble("progress"));
                 d.setCreatedAt(rs.getTimestamp("created_at"));
+                d.setBytesDownloaded(rs.getLong("bytes_downloaded")); // ← new
+                d.setResumable(rs.getBoolean("is_resumable"));        // ← new
                 list.add(d);
             }
         } catch (SQLException e) {
             System.out.println("✗ getAllDownloads failed: " + e.getMessage());
         }
         return list;
+    }
+
+    // DELETE a download
+    public void deleteDownload(int id) {
+        String sql = "DELETE FROM downloads WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            System.out.println("✓ Download " + id + " deleted from DB");
+        } catch (SQLException e) {
+            System.out.println("✗ deleteDownload failed: " + e.getMessage());
+        }
     }
 }

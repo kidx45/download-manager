@@ -51,11 +51,28 @@ public class DB {
                      "status VARCHAR(20) DEFAULT 'PENDING'," +
                      "progress DOUBLE DEFAULT 0.0," +
                      "save_path VARCHAR(255)," +
+                     "bytes_downloaded BIGINT DEFAULT 0," +
+                     "is_resumable BOOLEAN DEFAULT FALSE," +
                      "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                      ")";
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
             System.out.println("✓ Table ready!");
+
+            // Run migration for pre-existing tables
+            try {
+                stmt.execute("ALTER TABLE downloads ADD COLUMN bytes_downloaded BIGINT DEFAULT 0");
+                System.out.println("✓ Added bytes_downloaded column to existing table");
+            } catch (SQLException e) {
+                // Ignore: column already exists
+            }
+
+            try {
+                stmt.execute("ALTER TABLE downloads ADD COLUMN is_resumable BOOLEAN DEFAULT FALSE");
+                System.out.println("✓ Added is_resumable column to existing table");
+            } catch (SQLException e) {
+                // Ignore: column already exists
+            }
         } catch (SQLException e) {
             System.out.println("✗ Table creation failed: " + e.getMessage());
         }

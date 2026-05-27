@@ -71,26 +71,18 @@ public class Downloader implements Runnable {
             int bytesRead;
             long currentPosition = startByte;
 
+            if (responseCode == HttpURLConnection.HTTP_OK && startByte > 0) {
+                System.out.println("⚠ Server did not return partial content (HTTP 206). Resetting to download from scratch.");
+                currentPosition = 0;
+                totalBytesDownloaded.set(0);
+            }
+
             while ((bytesRead = stream.read(buffer)) != -1) {
 
                 // ─── PAUSE CHECK ──────────────────────────────
-                // synchronized means only one thread can be in
-                // this block at a time — prevents race conditions
-                synchronized (downloadInfo.getPauseLock()) {
-                    while (downloadInfo.isPaused()) {
-                        try {
-                            System.out.println("Thread " + threadNum + " paused...");
-                            dao.updateStatus(downloadId, "PAUSED");
-                            // wait() releases the lock and sleeps
-                            // until togglePause() calls notifyAll()
-                            downloadInfo.getPauseLock().wait();
-                            System.out.println("Thread " + threadNum + " resumed!");
-                            dao.updateStatus(downloadId, "DOWNLOADING");
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            return;
-                        }
-                    }
+                if (downloadInfo.isPaused()) {
+                    System.out.println("Thread " + threadNum + " pausing (terminating cleanly)...");
+                    return;
                 }
                 // ──────────────────────────────────────────────
 

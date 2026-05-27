@@ -1,51 +1,69 @@
 package download.manager.model;
 
+import javafx.beans.property.*;
 import java.sql.Timestamp;
 
-// MODEL: Represents one download record
-// This is a plain Java object (POJO) — just data, no logic
 public class Download {
 
-    // Fields — private because of encapsulation
-    private int id;
-    private String url;
-    private String fileName;
-    private long fileSize;
-    private String status;   // PENDING, DOWNLOADING, PAUSED, COMPLETED, FAILED
-    private double progress; // 0.0 to 100.0
-    private String savePath;
+    private final IntegerProperty id = new SimpleIntegerProperty();
+    private final StringProperty url = new SimpleStringProperty();
+    private final StringProperty fileName = new SimpleStringProperty();
+    private final LongProperty fileSize = new SimpleLongProperty();
+    private final StringProperty status = new SimpleStringProperty();
+    private final DoubleProperty progress = new SimpleDoubleProperty();
+    private final StringProperty savePath = new SimpleStringProperty();
     private Timestamp createdAt;
+    private final LongProperty bytesDownloaded = new SimpleLongProperty();
+    private final BooleanProperty resumable = new SimpleBooleanProperty();
 
-    // Constructor — called when creating a new download
     public Download(String url, String fileName, long fileSize, String savePath) {
-        this.url = url;
-        this.fileName = fileName;
-        this.fileSize = fileSize;
-        this.savePath = savePath;
-        this.status = "PENDING";
-        this.progress = 0.0;
+        setUrl(url);
+        setFileName(fileName);
+        setFileSize(fileSize);
+        setSavePath(savePath);
+        setStatus("PENDING");
+        setProgress(0.0);
+        setBytesDownloaded(0);
+        setResumable(false);
     }
 
+    // Property getters
+    public IntegerProperty idProperty() { return id; }
+    public StringProperty urlProperty() { return url; }
+    public StringProperty fileNameProperty() { return fileName; }
+    public LongProperty fileSizeProperty() { return fileSize; }
+    public StringProperty statusProperty() { return status; }
+    public DoubleProperty progressProperty() { return progress; }
+    public StringProperty savePathProperty() { return savePath; }
+    public LongProperty bytesDownloadedProperty() { return bytesDownloaded; }
+    public BooleanProperty resumableProperty() { return resumable; }
+
     // Getters
-    public int getId()           { return id; }
-    public String getUrl()       { return url; }
-    public String getFileName()  { return fileName; }
-    public long getFileSize()    { return fileSize; }
-    public String getStatus()    { return status; }
-    public double getProgress()  { return progress; }
-    public String getSavePath()  { return savePath; }
-    public Timestamp getCreatedAt() { return createdAt; }
+    public int getId()                  { return id.get(); }
+    public String getUrl()              { return url.get(); }
+    public String getFileName()         { return fileName.get(); }
+    public long getFileSize()           { return fileSize.get(); }
+    public String getStatus()           { return status.get(); }
+    public double getProgress()         { return progress.get(); }
+    public String getSavePath()         { return savePath.get(); }
+    public Timestamp getCreatedAt()     { return createdAt; }
+    public long getBytesDownloaded()    { return bytesDownloaded.get(); }
+    public boolean isResumable()        { return resumable.get(); }
 
     // Setters
-    public void setId(int id)              { this.id = id; }
-    public void setFileName(String n)      { this.fileName = n; }
-    public void setStatus(String status)   { this.status = status; }
-    public void setProgress(double p)      { this.progress = p; }
-    public void setCreatedAt(Timestamp t)  { this.createdAt = t; }
+    public void setId(int id)                       { this.id.set(id); }
+    public void setUrl(String url)                  { this.url.set(url); }
+    public void setFileName(String n)               { this.fileName.set(n); }
+    public void setFileSize(long s)                 { this.fileSize.set(s); }
+    public void setStatus(String status)            { this.status.set(status); }
+    public void setProgress(double p)               { this.progress.set(p); }
+    public void setSavePath(String p)               { this.savePath.set(p); }
+    public void setCreatedAt(Timestamp t)           { this.createdAt = t; }
+    public void setBytesDownloaded(long b)          { this.bytesDownloaded.set(b); }
+    public void setResumable(boolean r)             { this.resumable.set(r); }
 
-    // toString — used when printing a Download object
     @Override
     public String toString() {
-        return String.format("[%d] %s | %s | %.1f%%", id, fileName, status, progress);
+        return String.format("[%d] %s | %s | %.1f%%", getId(), getFileName(), getStatus(), getProgress());
     }
 }
