@@ -4,6 +4,7 @@
     -fx-background-color: #deedff;
     -fx-text-fill: #0f172a;
 }
+
 .search-field {
     -fx-pref-height: 42px;
     -fx-background-color: #eef2ff;
@@ -11,6 +12,8 @@
     -fx-prompt-text-fill: #94a3b8;
     -fx-border-color: rgba(148, 163, 184, 0.18);
     -fx-border-width: 1px;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
     -fx-padding: 0 16 0 16;
 }
 
@@ -19,20 +22,53 @@
     -fx-background-color: #ffffff;
 }
 
+#start_btn {
+    -fx-pref-height: 30px;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-font-size: 15;
+    -fx-border-radius: 10;
+    -fx-border-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-background-radius: 10;
+    transition: -fx-background-color 0.1s ease-out;
+    transition: -fx-text-fill 0.1s ease-out;
+}
+
+#start_btn:hover {
+    -fx-background-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-text-fill: #ffffff;
+}
+
 .progress-bar .bar {
     -fx-background-color: linear-gradient(to right, #b4d6ff, #77a2ff);
 }
 
 .table-view {
     -fx-background-color: rgba(255, 255, 255, 0.8);
-    -fx-border-color: rgba(148, 163, 184, 0.14);
+    -fx-border-color: rgb(252, 252, 252);
+    -fx-border-width: 1px;
 }
 
-.table-view .column-header-background {
-    -fx-background-color: rgba(30, 41, 59, 0.96);
+.table-view .column-header {
+    -fx-background-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
 }
 
+.action-button {
+    -fx-pref-height: 30px;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-font-size: 15;
+    -fx-border-radius: 10;
+    -fx-border-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-background-radius: 10;
+    transition: -fx-background-color 0.1s ease-out;
+    transition: -fx-text-fill 0.1s ease-out;
+}
 
+.action-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-text-fill: #ffffff;
+}
 .table-view .table-row-cell {
     -fx-text-background-color: #0f172a;
 }
@@ -44,3 +80,8 @@
 .table-view .table-row-cell:filled:selected {
     -fx-background-color: rgba(59, 130, 246, 0.16);
 }
+
+.table-column #actions {
+    -fx-background-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+}
+

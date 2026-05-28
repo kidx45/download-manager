@@ -3,7 +3,6 @@
 .root {
     -fx-font-family: 'Product Sans';
     -fx-background-color: #deedff;
-    -fx-text-fill: #0f172a;
     -fx-font-weight: bold;
 }
 
@@ -12,3 +11,53 @@
     -fx-font-family: 'Product Sans', sans-serif;
 }
 
+#side_download {
+    -fx-pref-height: 30px;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-font-size: 15;
+    -fx-border-radius: 10;
+    -fx-border-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-background-radius: 10;
+    transition: -fx-background-color 0.1s ease-out;
+    transition: -fx-text-fill 0.1s ease-out;
+}
+
+#side_download:hover {
+    -fx-background-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-text-fill: #ffffff;
+}
+
+#side_setting {
+    -fx-pref-height: 30px;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-font-size: 15;
+    -fx-border-radius: 10;
+    -fx-border-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-background-radius: 10;
+    transition: -fx-background-color 0.1s ease-out;
+    transition: -fx-text-fill 0.1s ease-out;
+}
+
+#side_setting:hover {
+    -fx-background-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-text-fill: #ffffff;
+}
+
+#side_about {
+    -fx-pref-height: 30px;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-font-size: 15;
+    -fx-border-radius: 10;
+    -fx-border-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-background-radius: 10;
+    transition: -fx-background-color 0.1s ease-out;
+    transition: -fx-text-fill 0.1s ease-out;
+}
+
+#side_about:hover {
+    -fx-background-color: linear-gradient(to bottom, #9dc3ff, #5985ff);
+    -fx-text-fill: #ffffff;
+}

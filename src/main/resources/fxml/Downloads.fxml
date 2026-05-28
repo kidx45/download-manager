@@ -20,7 +20,7 @@
             <children>
                 <Label text="URL:"/>
                 <TextField fx:id="urlField" promptText="Paste download URL here..." HBox.hgrow="ALWAYS" styleClass="search-field"/>
-                <Button fx:id="startBtn" text="Start Download" onAction="#onStartClicked"/>
+                <Button fx:id="startBtn" id="start_btn" text="Start Download" onAction="#onStartClicked"/>
                 <Button fx:id="refreshBtn" text="Refresh" onAction="#onRefreshClicked"/>
             </children>
         </HBox>
@@ -39,7 +39,7 @@
                 <TableColumn fx:id="statusCol"   text="Status"   prefWidth="100"/>
                 <TableColumn fx:id="progressCol" text="Progress" prefWidth="70"/>
                 <TableColumn fx:id="urlCol"      text="URL"      prefWidth="250"/>
-                <TableColumn fx:id="actionsCol"  text="Actions"  prefWidth="100"/>
+                <TableColumn fx:id="actionsCol"  id="actions" text="Actions"  prefWidth="100"/>
             </columns>
         </TableView>
     </children>

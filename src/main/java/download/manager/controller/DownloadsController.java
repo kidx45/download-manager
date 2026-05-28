@@ -272,6 +272,7 @@ public class DownloadsController implements Initializable {
 
             {
                 menu.getItems().addAll(pauseItem, resumeItem, cancelItem, deleteItem);
+                actionBtn.getStyleClass().add("action-button");
                 actionBtn.setFocusTraversable(false);
                 actionBtn.setPrefWidth(100);
                 actionBtn.setOnAction(e -> menu.show(actionBtn, Side.BOTTOM, 0, 0));
