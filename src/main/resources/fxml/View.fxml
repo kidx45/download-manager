@@ -1,55 +1,277 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="download.manager.controller.MainController"
-            prefWidth="880" prefHeight="580"
-            id="mainPane">
+            prefWidth="960" prefHeight="720"
+            styleClass="app-shell">
 
-    <!-- TOP: Simple Page Header -->
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
+        <HBox alignment="CENTER_LEFT" spacing="18" styleClass="top-bar">
             <children>
-                <Label fx:id="Page_Name" text="Downloads" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                <VBox spacing="2" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Download-Manager" styleClass="brand-title"/>
+                        <Label text="v1" styleClass="brand-subtitle"/>
+                    </children>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Label fx:id="Page_Name" text="Downloads" styleClass="page-title"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <TextField promptText="Search settings..." prefWidth="280" styleClass="search-field"/>
             </children>
+            <padding>
+                <Insets top="0" right="0" bottom="0" left="0"/>
+            </padding>
         </HBox>
     </top>
 
-    <!-- LEFT: Sidebar -->
     <left>
-        <VBox spacing="10" prefWidth="150">
+        <VBox prefWidth="280" spacing="10" styleClass="sidebar">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets top="18" right="14" bottom="18" left="14"/>
             </padding>
             <children>
-                <Label text="Navigation" style="-fx-font-weight: bold;"/>
-                <Button text="Downloads" maxWidth="Infinity" alignment="BASELINE_LEFT" onAction="#onDownloadsNavClicked"/>
-                <Button text="Settings" maxWidth="Infinity" alignment="BASELINE_LEFT" onAction="#onSettingsNavClicked"/>
-                <Button text="About" maxWidth="Infinity" alignment="BASELINE_LEFT" onAction="#onAboutNavClicked"/>
+                <VBox spacing="2" styleClass="sidebar-header">
+                    <children>
+                        <Label text="Download-Manager" styleClass="brand-title"/>
+                        <Label text="Manage every download in one place" styleClass="brand-subtitle" wrapText="true"/>
+                    </children>
+                </VBox>
+
+                <VBox spacing="8" styleClass="nav-group">
+                    <children>
+                        <ToggleButton text="All Downloads" selected="true" maxWidth="Infinity" onAction="#onDownloadsNavClicked" styleClass="sidebar-button">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="navGroup"/>
+                            </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton text="Settings" maxWidth="Infinity" onAction="#onSettingsNavClicked" styleClass="sidebar-button">
+                            <toggleGroup>
+                                <fx:reference source="navGroup"/>
+                            </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton text="About" maxWidth="Infinity" onAction="#onAboutNavClicked" styleClass="sidebar-button">
+                            <toggleGroup>
+                                <fx:reference source="navGroup"/>
+                            </toggleGroup>
+                        </ToggleButton>
+                    </children>
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <VBox spacing="8" styleClass="footer-card">
+                    <children>
+                        <Label text="Tip" styleClass="subtle-label"/>
+                        <Label text="Use the settings panel to change your default download folder and theme." wrapText="true" styleClass="muted-text"/>
+                    </children>
+                </VBox>
             </children>
         </VBox>
     </left>
 
-    <!-- CENTER: Main Content Pane (StackPane holds dynamic content) -->
     <center>
-        <StackPane fx:id="contentPane"/>
+        <StackPane styleClass="content-shell">
+            <children>
+                <VBox fx:id="downloadsView" spacing="18" visible="true" managed="true" styleClass="page-view">
+                    <children>
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="view-scroll">
+                            <content>
+                                <VBox spacing="18">
+                                    <children>
+                                        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="download-card">
+                                            <children>
+                                                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label text="Start a Download" styleClass="section-title"/>
+                                                        <Label text="Paste a link and begin a new transfer." styleClass="section-text"/>
+                                                    </children>
+                                                </VBox>
+
+                                                <TextField fx:id="urlField" promptText="Paste download URL here..." prefWidth="360" HBox.hgrow="ALWAYS"/>
+                                                <Button fx:id="startBtn" text="Start Download" onAction="#onStartClicked" styleClass="primary-button"/>
+                                                <Button text="Refresh" onAction="#onRefreshClicked"/>
+                                            </children>
+                                        </HBox>
+
+                                        <VBox spacing="10" styleClass="section-card">
+                                            <children>
+                                                <Label text="Current Progress" styleClass="section-title"/>
+                                                <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity" prefHeight="14"/>
+                                                <Label fx:id="statusLabel" text="Ready" styleClass="status-text"/>
+                                            </children>
+                                        </VBox>
+
+                                        <TableView fx:id="table" VBox.vgrow="ALWAYS" prefHeight="420">
+                                            <columns>
+                                                <TableColumn fx:id="idCol" text="ID" prefWidth="60"/>
+                                                <TableColumn fx:id="fileCol" text="File" prefWidth="220"/>
+                                                <TableColumn fx:id="statusCol" text="Status" prefWidth="110"/>
+                                                <TableColumn fx:id="progressCol" text="Progress" prefWidth="100"/>
+                                                <TableColumn fx:id="urlCol" text="URL" prefWidth="320"/>
+                                                <TableColumn fx:id="actionsCol" text="Actions" prefWidth="110"/>
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
+
+                <VBox fx:id="settingsView" spacing="18" visible="false" managed="false" styleClass="page-view">
+                    <children>
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="view-scroll">
+                            <content>
+                                <VBox spacing="18">
+                                    <children>
+                                        <VBox spacing="12" styleClass="section-card">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="14">
+                                                    <children>
+                                                        <Label text="◌" styleClass="section-icon"/>
+                                                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="Appearance" styleClass="section-title"/>
+                                                                <Label text="Choose whether the interface stays light or switches to dark." styleClass="section-text" wrapText="true"/>
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </HBox>
+
+                                                <Separator/>
+
+                                                <HBox alignment="CENTER_LEFT" spacing="14">
+                                                    <children>
+                                                        <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="Dark Mode" styleClass="subtle-label"/>
+                                                                <Label text="Reduce eye strain in low-light environments" styleClass="muted-text" wrapText="true"/>
+                                                            </children>
+                                                        </VBox>
+
+                                                        <HBox spacing="12" alignment="CENTER_RIGHT">
+                                                            <children>
+                                                                <RadioButton fx:id="lightThemeRadio" text="Light" selected="true">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="themeGroup"/>
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="darkThemeRadio" text="Dark">
+                                                                    <toggleGroup>
+                                                                        <fx:reference source="themeGroup"/>
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="12" styleClass="section-card">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="14">
+                                                    <children>
+                                                        <Label text="⌂" styleClass="section-icon"/>
+                                                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="Download Location" styleClass="section-title"/>
+                                                                <Label text="Set the default folder for every new download." styleClass="section-text" wrapText="true"/>
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </HBox>
+
+                                                <Separator/>
+
+                                                <VBox spacing="8">
+                                                    <children>
+                                                        <Label text="Default Path" styleClass="subtle-label"/>
+                                                        <HBox spacing="10" alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <TextField fx:id="savePathField" editable="false" HBox.hgrow="ALWAYS"/>
+                                                                <Button text="Browse" onAction="#onBrowseSavePathClicked"/>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="12" styleClass="section-card">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="14">
+                                                    <children>
+                                                        <Label text="⚡" styleClass="section-icon"/>
+                                                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="Network &amp; Concurrency" styleClass="section-title"/>
+                                                                <Label text="Current build keeps these settings managed automatically by the app." styleClass="section-text" wrapText="true"/>
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </HBox>
+
+                                                <Separator/>
+
+                                                <VBox spacing="10">
+                                                    <children>
+                                                        <Label text="This screen is intentionally visual only and does not change the current download workflow." styleClass="muted-text" wrapText="true"/>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+
+                                        <HBox alignment="CENTER_LEFT" spacing="16" styleClass="page-footer">
+                                            <children>
+                                                <Label text="Restore Defaults" styleClass="ghost-button"/>
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Button text="Cancel"/>
+                                                <Button text="Save Changes" onAction="#onSaveSettingsClicked" styleClass="primary-button"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
+
+                <VBox fx:id="aboutView" spacing="18" visible="false" managed="false" styleClass="page-view" alignment="CENTER">
+                    <children>
+                        <VBox spacing="14" styleClass="section-card" maxWidth="560">
+                            <children>
+                                <Label text="About Download Manager" styleClass="section-title"/>
+                                <Separator/>
+                                <Label text="Version: 1.0" styleClass="subtle-label"/>
+                                <Label text="Release Date: May 29, 2026" styleClass="subtle-label"/>
+                                <Label text="Creators: Group 4" styleClass="subtle-label"/>
+                                <Label text="A professional and efficient tool for managing your internet downloads. Featuring multi-threaded fetching, resumable downloads, and a clean user interface." wrapText="true" styleClass="section-text"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
     </center>
 
-    <!-- BOTTOM: Status Bar -->
     <bottom>
-        <HBox alignment="CENTER_LEFT" spacing="5">
+        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="status-bar">
             <padding>
-                <Insets top="5" right="10" bottom="5" left="10"/>
+                <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
             <children>
-                <Label text="Status:"/>
-                <Label fx:id="statusLabel" text="Ready"/>
+                <Label text="Status:" styleClass="status-text"/>
+                <Label fx:id="statusLabel" text="Ready" styleClass="status-text"/>
             </children>
         </HBox>
     </bottom>

@@ -1,46 +1,33 @@
 /* downloads.css - Downloads view styles */
 
 #downloads {
-    -fx-background-color: #deedff;
-    -fx-text-fill: #0f172a;
-}
-.search-field {
-    -fx-pref-height: 42px;
-    -fx-background-color: #eef2ff;
-    -fx-text-fill: #0f172a;
-    -fx-prompt-text-fill: #94a3b8;
-    -fx-border-color: rgba(148, 163, 184, 0.18);
-    -fx-border-width: 1px;
-    -fx-padding: 0 16 0 16;
+    -fx-background-color: transparent;
 }
 
-.search-field:focused {
-    -fx-border-color: #93c5fd;
-    -fx-background-color: #ffffff;
+/* URL toolbar */
+HBox > .search-field {
+    -fx-pref-height: 44px;
 }
 
-.progress-bar .bar {
-    -fx-background-color: linear-gradient(to right, #b4d6ff, #77a2ff);
-}
+/* Cards / sections inside downloads view */
+.section-card { -fx-background-color: transparent; }
 
+/* Progress appearance */
+.progress-bar .track { -fx-background-color: rgba(15,23,42,0.06); -fx-background-radius: 999; }
+.progress-bar .bar { -fx-background-color: linear-gradient(to right, #8fb7ff, #3b82f6); -fx-background-radius: 999; }
+
+/* Table look */
 .table-view {
-    -fx-background-color: rgba(255, 255, 255, 0.8);
-    -fx-border-color: rgba(148, 163, 184, 0.14);
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
 
-.table-view .column-header-background {
-    -fx-background-color: rgba(30, 41, 59, 0.96);
-}
+.table-view .column-header-background { -fx-background-color: rgba(246,248,252,0.8); -fx-background-radius: 8 8 0 0; }
+.table-view .column-header .label { -fx-text-fill: #42526a; -fx-font-weight: 700; }
 
+.table-view .table-row-cell { -fx-text-background-color: #0f172a; }
+.table-view .table-row-cell:filled:hover { -fx-background-color: rgba(29,78,216,0.04); }
+.table-view .table-row-cell:filled:selected { -fx-background-color: rgba(59,130,246,0.06); }
 
-.table-view .table-row-cell {
-    -fx-text-background-color: #0f172a;
-}
-
-.table-view .table-row-cell:filled:hover {
-    -fx-background-color: rgba(37, 99, 235, 0.12);
-}
-
-.table-view .table-row-cell:filled:selected {
-    -fx-background-color: rgba(59, 130, 246, 0.16);
-}
+/* Actions button style */
+.button { -fx-background-radius: 8; }
