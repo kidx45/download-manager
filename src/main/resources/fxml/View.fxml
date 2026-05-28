@@ -2,12 +2,12 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<!-- COMMENT: Imports geometry Insets -->
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="download.manager.controller.DownloadController"
-            prefWidth="880" prefHeight="580">
+            fx:controller="download.manager.controller.MainController"
+            prefWidth="880" prefHeight="580"
+            id="mainPane">
 
     <!-- TOP: Simple Page Header -->
     <top>
@@ -36,115 +36,9 @@
         </VBox>
     </left>
 
-    <!-- CENTER: Main Content Pane (StackPane swaps children) -->
+    <!-- CENTER: Main Content Pane (StackPane holds dynamic content) -->
     <center>
-        <StackPane>
-            <children>
-                <!-- Downloads View -->
-                <VBox fx:id="downloadsView" spacing="10">
-                    <padding>
-                        <Insets top="10" right="10" bottom="10" left="10"/>
-                    </padding>
-                    <children>
-                        <!-- URL Input Toolbar only visible inside Downloads view -->
-                        <HBox spacing="10" alignment="CENTER_LEFT">
-                            <children>
-                                <Label text="URL:"/>
-                                <TextField fx:id="urlField" promptText="Paste download URL here..." HBox.hgrow="ALWAYS"/>
-                                <Button fx:id="startBtn" text="Start Download" onAction="#onStartClicked"/>
-                                <Button fx:id="refreshBtn" text="Refresh" onAction="#onRefreshClicked"/>
-                            </children>
-                        </HBox>
-
-                        <VBox spacing="5">
-                            <children>
-                                <Label text="Progress:"/>
-                                <ProgressBar fx:id="progressBar" progress="0" maxWidth="Infinity"/>
-                            </children>
-                        </VBox>
-
-                        <TableView fx:id="table" VBox.vgrow="ALWAYS">
-                            <columns>
-                                <TableColumn fx:id="idCol"       text="ID"       prefWidth="40"/>
-                                <TableColumn fx:id="fileCol"     text="File"     prefWidth="180"/>
-                                <TableColumn fx:id="statusCol"   text="Status"   prefWidth="100"/>
-                                <TableColumn fx:id="progressCol" text="Progress" prefWidth="70"/>
-                                <TableColumn fx:id="urlCol"      text="URL"      prefWidth="250"/>
-                                <TableColumn fx:id="actionsCol"  text="Actions"  prefWidth="100"/>
-                            </columns>
-                        </TableView>
-                    </children>
-                </VBox>
-
-                <!-- Settings View -->
-                <VBox fx:id="settingsView" spacing="15" visible="false" managed="false">
-                    <padding>
-                        <Insets top="10" right="10" bottom="10" left="10"/>
-                    </padding>
-                    <children>
-                        <Label text="Download Settings" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-                        
-                        <!-- Save Path Selection -->
-                        <VBox spacing="5">
-                            <children>
-                                <Label text="Default Save Location:" style="-fx-font-weight: bold;"/>
-                                <HBox spacing="10" alignment="CENTER_LEFT">
-                                    <children>
-                                        <TextField fx:id="savePathField" HBox.hgrow="ALWAYS" editable="false"/>
-                                        <Button text="Browse..." onAction="#onBrowseSavePathClicked"/>
-                                    </children>
-                                </HBox>
-                            </children>
-                        </VBox>
-
-                        <!-- Theme Selection -->
-                        <VBox spacing="5">
-                            <children>
-                                <Label text="Appearance Theme:" style="-fx-font-weight: bold;"/>
-                                <RadioButton fx:id="lightThemeRadio" text="Light Mode" selected="true">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="themeGroup"/>
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton fx:id="darkThemeRadio" text="Dark Mode">
-                                    <toggleGroup>
-                                        <fx:reference source="themeGroup"/>
-                                    </toggleGroup>
-                                </RadioButton>
-                            </children>
-                        </VBox>
-                        
-                        <Button text="Save Settings" onAction="#onSaveSettingsClicked" style="-fx-font-weight: bold;"/>
-                    </children>
-                </VBox>
-
-                <!-- About View -->
-                <VBox fx:id="aboutView" spacing="20" visible="false" managed="false" alignment="CENTER">
-                    <padding>
-                        <Insets top="20" right="20" bottom="20" left="20"/>
-                    </padding>
-                    <children>
-                        <Label text="About Download Manager" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                        <Separator maxWidth="400"/>
-                        
-                        <VBox spacing="10" alignment="CENTER">
-                            <children>
-                                <Label text="Version: 1.0" style="-fx-font-size: 16px;"/>
-                                <Label text="Release Date: May 29, 2026" style="-fx-font-size: 16px;"/>
-                                <Label text="Creators: Group 4" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-                            </children>
-                        </VBox>
-                        
-                        <Separator maxWidth="400"/>
-                        
-                        <Label text="A professional and efficient tool for managing your internet downloads. Featuring multi-threaded fetching, resumable downloads, and a clean user interface." 
-                               wrapText="true" textAlignment="CENTER" maxWidth="500" style="-fx-font-size: 14px; -fx-font-style: italic;"/>
-                        
-                        <Label text="Built with JavaFX, Maven, and MySQL." style="-fx-text-fill: gray;"/>
-                    </children>
-                </VBox>
-            </children>
-        </StackPane>
+        <StackPane fx:id="contentPane"/>
     </center>
 
     <!-- BOTTOM: Status Bar -->

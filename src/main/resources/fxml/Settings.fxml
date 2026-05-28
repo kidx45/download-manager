@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="download.manager.controller.SettingsController"
+      spacing="15"
+      stylesheets="@../css/settings.css">
+    
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <children>
+        <Label text="Download Settings" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        
+        <!-- Save Path Selection -->
+        <VBox spacing="5">
+            <children>
+                <Label text="Default Save Location:" style="-fx-font-weight: bold;"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <TextField fx:id="savePathField" HBox.hgrow="ALWAYS" editable="false"/>
+                        <Button text="Browse..." onAction="#onBrowseSavePathClicked"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- Theme Selection -->
+        <VBox spacing="5">
+            <children>
+                <Label text="Appearance Theme:" style="-fx-font-weight: bold;"/>
+                <RadioButton fx:id="lightThemeRadio" text="Light Mode" selected="true">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="themeGroup"/>
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="darkThemeRadio" text="Dark Mode">
+                    <toggleGroup>
+                        <fx:reference source="themeGroup"/>
+                    </toggleGroup>
+                </RadioButton>
+            </children>
+        </VBox>
+        
+        <Button text="Save Settings" onAction="#onSaveSettingsClicked" style="-fx-font-weight: bold;"/>
+    </children>
+</VBox>

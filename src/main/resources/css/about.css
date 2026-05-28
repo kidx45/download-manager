@@ -1,0 +1,13 @@
+/* about.css - About view styles */
+
+.label {
+    -fx-text-fill: #0f172a;
+}
+
+.separator {
+    -fx-border-color: rgba(148, 163, 184, 0.18);
+}
+
+.vbox {
+    -fx-spacing: 20;
+}

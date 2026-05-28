@@ -128,3 +128,4 @@ In `DownloadController.java`, you'll see lines like `progressBar.progressPropert
 *   **Threads**: This app uses "Background Threads". This is why the UI doesn't freeze while a file is downloading!
 
 Happy coding! 👨‍💻👩‍💻
+

@@ -1,101 +1,132 @@
-/* dark.css - Dark theme stylesheet for Download Manager */
+/* dark.css - dark overrides for Download Manager */
+
 .root {
-    -fx-background-color: #0f172a;
+    -fx-font-family: 'Product Sans';
+    -fx-background-color: rgb(52, 52, 52);
+    -fx-text-fill: #d7d7d7;
 }
 
+/* Broadly apply font to ensure it's used if available */
+.label, .button, .text-field, .table-view, .text, .tab, .menu-item, .check-box, .radio-button {
+    -fx-font-family: 'Product Sans', sans-serif;
+}
+
+.sidebar,
+.top-bar,
+.section-card,
+.download-card,
+.footer-card,
+.status-bar,
+.table-view {
+    -fx-background-color: rgba(85, 85, 85, 0);
+    -fx-border-color: rgba(158, 158, 158, 0);
+}
+
+.brand-title,
+.page-title,
+.section-title,
+.radio-button,
+.subtle-label,
+.status-text,
+.sidebar-button,
+.button,
 .label {
-    -fx-text-fill: #f8fafc;
+    -fx-text-fill: #e2e2e2;
+}
+
+.brand-subtitle,
+.section-text,
+.muted-text {
+    -fx-text-fill: #525252;
+}
+
+.sidebar-button:selected {
+    -fx-background-color: rgba(255, 255, 255, 0);
+    -fx-text-fill: #dfdddd;
+}
+
+.sidebar-button:hover,
+.icon-button:hover,
+.button:hover {
+    -fx-background-color: rgba(224, 224, 224, 0);
+}
+
+.search-field,
+.text-field,
+.text-area {
+    -fx-background-color: rgba(159, 159, 159, 0);
+    -fx-text-fill: #5a5a5a;
+    -fx-prompt-text-fill: #4d4d4d;
+    -fx-border-color: rgba(159, 159, 159, 0);
+}
+
+.search-field:focused,
+.text-field:focused,
+.text-area:focused {
+    -fx-border-color: #535353;
+    -fx-background-color: rgba(159, 159, 159, 0);
 }
 
 .button {
-    -fx-background-color: #1e293b;
-    -fx-text-fill: #f8fafc;
-    -fx-border-color: #334155;
-    -fx-border-width: 1px;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
+    -fx-background-color: rgb(125, 125, 125);
+    -fx-border-color: rgb(125, 125, 125);
 }
 
-.button:hover {
-    -fx-background-color: #334155;
+.primary-button {
+    -fx-background-color: rgba(159, 159, 159, 0);
+    -fx-text-fill: rgb(81, 81, 81);
 }
 
-.button:pressed {
-    -fx-background-color: #475569;
+.ghost-button {
+    -fx-text-fill: #363636;
 }
 
-.button:disabled {
-    -fx-opacity: 0.4;
-}
-
-.text-field {
-    -fx-background-color: #1e293b;
-    -fx-text-fill: #f8fafc;
-    -fx-prompt-text-fill: #64748b;
-    -fx-border-color: #334155;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
-}
-
-.text-field:focused {
-    -fx-border-color: #3b82f6;
-}
-
-.table-view {
-    -fx-background-color: #0f172a;
-    -fx-border-color: #1e293b;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-}
-
-.table-view .column-header {
-    -fx-background-color: #1e293b;
-    -fx-border-color: #334155;
-    -fx-border-width: 0 1px 1px 0;
+.table-view .column-header-background {
+    -fx-background-color: rgba(159, 159, 159, 0);
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: #94a3b8;
-    -fx-font-weight: bold;
+    -fx-text-fill: #454545;
 }
 
-.table-row-cell {
-    -fx-background-color: #0f172a;
-    -fx-text-background-color: #f8fafc;
+.table-view .table-row-cell {
+    -fx-text-background-color: #777777;
 }
 
-.table-row-cell:filled:selected {
-    -fx-background-color: #1e293b;
+.table-view .table-row-cell:filled:hover {
+    -fx-background-color: rgba(37, 99, 235, 0.12);
 }
 
-.table-row-cell:filled:hover {
-    -fx-background-color: #1e293b;
+.table-view .table-row-cell:filled:selected {
+    -fx-background-color: rgba(59, 130, 246, 0.16);
 }
 
 .progress-bar {
-    -fx-background-color: #1e293b;
-    -fx-background-radius: 6px;
+    -fx-background-color: rgb(52, 52, 52);
 }
 
 .progress-bar .track {
-    -fx-background-color: #1e293b;
-    -fx-background-radius: 6px;
+    -fx-background-color: linear-gradient(to top, #a8a8a8, #dfdfdf);
 }
 
 .progress-bar .bar {
-    -fx-background-color: #3b82f6;
-    -fx-background-radius: 6px;
+    -fx-background-color: rgba(241, 241, 241, 0.717);
 }
 
-.radio-button {
-    -fx-text-fill: #f8fafc;
+.radio-button .radio,
+.radio-button:selected .radio {
+    -fx-background-color: rgba(159, 159, 159, 0);
+    -fx-border-color: rgb(114, 114, 114);
 }
 
-.radio-button .radio {
-    -fx-background-color: #1e293b;
-    -fx-border-color: #334155;
+.radio-button:selected .dot {
+    -fx-background-color: #5d5d5d;
 }
 
-.radio-button:selected .radio .dot {
-    -fx-background-color: #3b82f6;
+.slider .track {
+    -fx-background-color: rgba(160, 160, 160, 0);
+}
+
+.slider .thumb {
+    -fx-background-color: #9e9e9e00;
 }

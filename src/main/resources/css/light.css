@@ -1,0 +1,14 @@
+/* app.css - light UI for Download Manager */
+
+.root {
+    -fx-font-family: 'Product Sans';
+    -fx-background-color: #deedff;
+    -fx-text-fill: #0f172a;
+    -fx-font-weight: bold;
+}
+
+/* Broadly apply font to ensure it's used if available */
+.label, .button, .text-field, .table-view, .text, .tab, .menu-item, .check-box, .radio-button {
+    -fx-font-family: 'Product Sans', sans-serif;
+}
+
