@@ -15,7 +15,7 @@
                 <VBox spacing="2" alignment="CENTER_LEFT">
                     <children>
                         <Label text="Download-Manager" styleClass="brand-title"/>
-                        <Label text="v2.0.4" styleClass="brand-subtitle"/>
+                        <Label text="v1" styleClass="brand-subtitle"/>
                     </children>
                 </VBox>
 
@@ -98,7 +98,6 @@
 
                                                 <TextField fx:id="urlField" promptText="Paste download URL here..." prefWidth="360" HBox.hgrow="ALWAYS"/>
                                                 <Button fx:id="startBtn" text="Start Download" onAction="#onStartClicked" styleClass="primary-button"/>
-                                                <Button fx:id="refreshBtn" text="Refresh" onAction="#onRefreshClicked"/>
                                             </children>
                                         </HBox>
 

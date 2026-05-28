@@ -27,7 +27,6 @@ public class DownloadController implements Initializable {
 
     @FXML private TextField urlField;
     @FXML private Button startBtn;
-    @FXML private Button refreshBtn;
     @FXML private ProgressBar progressBar;
     @FXML private Label statusLabel;
 
