@@ -6,7 +6,10 @@ import download.manager.storage.DAO;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -68,9 +71,17 @@ public class DownloadInfo {
     public void start() {
         try {
             // STEP 1: Parse URL and file name
-            URL url = new URL(downloadUrl);
-            String fileName = downloadUrl.substring(
-                    downloadUrl.lastIndexOf('/') + 1);
+            URI downloadUri = new URI(downloadUrl.trim());
+            String scheme = downloadUri.getScheme();
+
+            if (scheme == null || !("http".equalsIgnoreCase(scheme)
+                    || "https".equalsIgnoreCase(scheme))) {
+                System.out.println("✗ IO Error: unknown protocol: " + scheme);
+                return;
+            }
+
+            URL url = downloadUri.toURL();
+            String fileName = resolveFileName(downloadUri);
             System.out.println("File: " + fileName);
 
             // STEP 2: Get file size
@@ -190,6 +201,9 @@ public class DownloadInfo {
         } catch (IOException e) {
             System.out.println("✗ IO Error: " + e.getMessage());
             if (downloadId != -1) dao.updateStatus(downloadId, "FAILED");
+        } catch (URISyntaxException e) {
+            System.out.println("✗ IO Error: invalid download URL - " + e.getMessage());
+            if (downloadId != -1) dao.updateStatus(downloadId, "FAILED");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             if (downloadId != -1) dao.updateStatus(downloadId, "FAILED");
@@ -197,5 +211,21 @@ public class DownloadInfo {
             // Always remove from active map when done
             activeDownloads.remove(downloadId);
         }
+    }
+
+    private String resolveFileName(URI downloadUri) {
+        String path = downloadUri.getPath();
+
+        if (path == null || path.isBlank() || "/".equals(path)) {
+            return "download.bin";
+        }
+
+        String candidate = Paths.get(path).getFileName().toString();
+
+        if (candidate == null || candidate.isBlank()) {
+            return "download.bin";
+        }
+
+        return candidate.replaceAll("[\\\\/:*?\"<>|]", "_");
     }
 }
