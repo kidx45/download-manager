@@ -65,6 +65,46 @@
     -fx-border-color: rgba(148, 163, 184, 0.16);
 }
 
+.menu-button {
+    -fx-background-color: #0f172a;
+    -fx-text-fill: #e5eefb;
+    -fx-border-color: rgba(148, 163, 184, 0.28);
+}
+
+.menu-button > .label {
+    -fx-text-fill: #e5eefb;
+}
+
+.context-menu {
+    -fx-background-color: #020617;
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(148, 163, 184, 0.28);
+    -fx-border-radius: 10;
+    -fx-padding: 4;
+}
+
+.context-menu .menu-item {
+    -fx-background-color: transparent;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: #e5eefb;
+}
+
+.context-menu .menu-item:focused,
+.context-menu .menu-item:hovered {
+    -fx-background-color: rgba(59, 130, 246, 0.35);
+}
+
+.context-menu .menu-item:disabled {
+    -fx-opacity: 1;
+    -fx-background-color: rgba(148, 163, 184, 0.08);
+}
+
+.context-menu .menu-item:disabled .label {
+    -fx-text-fill: #9fb4d1;
+}
+
 .primary-button {
     -fx-background-color: linear-gradient(to bottom, #3b82f6, #1d4ed8);
     -fx-text-fill: white;
