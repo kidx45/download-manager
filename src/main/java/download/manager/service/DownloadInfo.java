@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class DownloadInfo {
 
-    private static final int NUM_THREADS = 1;
+    private static final int NUM_THREADS = 5;
 
     // Static map — tracks all currently active downloads
     public static final Map<Integer, DownloadInfo> activeDownloads
@@ -73,7 +73,10 @@ public class DownloadInfo {
                     downloadUrl.lastIndexOf('/') + 1);
             System.out.println("File: " + fileName);
 
-            // STEP 2: Get file size
+            // STEP 2: Get file from the url and this is done by
+            // since the links expect a browser to send a request to the download link
+            // we would have to configure our request so it simulates it being sent from
+            // a browser
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setInstanceFollowRedirects(true);
@@ -83,6 +86,7 @@ public class DownloadInfo {
             conn.setRequestProperty("Accept", "application/octet-stream,*/*");
             conn.connect();
 
+            // Get the file size from the connection with server storing the data we want
             String contentLength = conn.getHeaderField("Content-Length");
             long fileSize = contentLength != null
                     ? Long.parseLong(contentLength)
@@ -95,7 +99,12 @@ public class DownloadInfo {
             }
             System.out.printf("Size: %.2f MB%n", fileSize / (1024.0 * 1024.0));
 
-            // Determine save path
+            // Determine save path if it is new
+            // Then it won't have one hence the info associated with the download file
+            // it will be given a savePath on the first condition else if it was already
+            // being downloaded but didn't finish then the path will be be retrieved
+            // in case thought if it doesn't have one it will be assigned the current savePath
+            // given by the user
             String saveDir = download.manager.config.SettingsManager.getSavePath();
             java.io.File file;
             if (downloadId == -1) {
@@ -125,6 +134,8 @@ public class DownloadInfo {
             activeDownloads.put(downloadId, this);
 
             // STEP 5: Open output file
+            // So a RandomAccessFile is a type of file that you can read and write at a specific
+            // byte position meaning
             // If resuming, don't reset the file — keep existing bytes
             RandomAccessFile outputFile = new RandomAccessFile(file, "rw");
             if (startFromByte == 0) {
@@ -134,7 +145,7 @@ public class DownloadInfo {
 
             // STEP 6: Calculate chunks starting from where we left off
             // If new: startFromByte = 0, downloads everything
-            // If resuming: startFromByte = 5000000, skips first 5MB
+            // If resuming: for example startFromByte = 5000000, skips first 5MB
             long remainingBytes = fileSize - startFromByte;
             long chunkSize = remainingBytes / NUM_THREADS;
             long remainder = remainingBytes % NUM_THREADS;
@@ -146,6 +157,9 @@ public class DownloadInfo {
             dao.updateStatus(downloadId, "DOWNLOADING");
 
             // STEP 8: Shared counter starts from bytes already downloaded
+            // It will check how much bytes have been downloaded and will keep track of
+            // each thread in the thread pool since each time we are updating th value by adding more
+            // bytes of data into the file
             AtomicLong totalBytesDownloaded = new AtomicLong(startFromByte);
 
             // STEP 9: Launch thread pool
@@ -167,6 +181,7 @@ public class DownloadInfo {
             }
 
             // STEP 10: Wait for all threads to finish
+            // This will just initiate that wait not shutting it down
             threadPool.shutdown();
             boolean allDone = threadPool.awaitTermination(
                     Long.MAX_VALUE, TimeUnit.MILLISECONDS);

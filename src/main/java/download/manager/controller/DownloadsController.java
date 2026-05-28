@@ -18,6 +18,7 @@ import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -275,6 +276,9 @@ public class DownloadsController implements Initializable {
                 actionBtn.setPrefWidth(100);
                 actionBtn.setOnAction(e -> menu.show(actionBtn, Side.BOTTOM, 0, 0));
 
+                // If you wonder why not IdProperty and getId or get status then it is because we only want the
+                // the string or the int not the property object as that is an object and we can't directly compare it 
+                // with basic data types but for setCellValueFactory it needs the property
                 pauseItem.setOnAction(e -> {
                     Download d = getItem();
                     if (d == null)
@@ -287,7 +291,7 @@ public class DownloadsController implements Initializable {
                     DownloadInfo info = DownloadInfo.activeDownloads.get(d.getId());
                     if (info != null) {
                         info.togglePause();
-                        setStatus("⏸ Pausing: " + d.getFileName());
+                        setStatus("Pausing: " + d.getFileName());
                     } else {
                         setStatus("Download not active!");
                     }
@@ -318,7 +322,7 @@ public class DownloadsController implements Initializable {
                         info.togglePause();
 
                     dao.updateStatus(d.getId(), "FAILED");
-                    setStatus("✗ Cancelled: " + d.getFileName());
+                    setStatus("Cancelled: " + d.getFileName());
                     onRefreshClicked();
                 });
 
@@ -333,11 +337,11 @@ public class DownloadsController implements Initializable {
 
                     dao.deleteDownload(d.getId());
 
-                    java.io.File file = new java.io.File(d.getFileName());
+                    File file = new File(d.getFileName());
                     if (file.exists())
                         file.delete();
 
-                    setStatus("🗑 Deleted: " + d.getFileName());
+                    setStatus("Deleted: " + d.getFileName());
                     onRefreshClicked();
                 });
             }
@@ -396,6 +400,7 @@ public class DownloadsController implements Initializable {
     }
 
     private void setupAutoRefresh() {
+        refreshBtn.setVisible(false);
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(1), e -> onRefreshClicked()));
         timeline.setCycleCount(Animation.INDEFINITE);
