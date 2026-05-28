@@ -25,32 +25,49 @@ import java.util.ResourceBundle;
 
 public class DownloadController implements Initializable {
 
-    @FXML private TextField urlField;
-    @FXML private Button startBtn;
-    @FXML private ProgressBar progressBar;
-    @FXML private Label statusLabel;
+    @FXML
+    private TextField urlField;
+    @FXML
+    private Button startBtn;
+    @FXML
+    private ProgressBar progressBar;
+    @FXML
+    private Label statusLabel;
 
-    @FXML private TableView<Download> table;
-    @FXML private TableColumn<Download, Number> idCol;
-    @FXML private TableColumn<Download, String> fileCol;
-    @FXML private TableColumn<Download, String> statusCol;
-    @FXML private TableColumn<Download, String> progressCol;
-    @FXML private TableColumn<Download, String> urlCol;
-    @FXML private TableColumn<Download, Download> actionsCol;
+    @FXML
+    private TableView<Download> table;
+    @FXML
+    private TableColumn<Download, Number> idCol;
+    @FXML
+    private TableColumn<Download, String> fileCol;
+    @FXML
+    private TableColumn<Download, String> statusCol;
+    @FXML
+    private TableColumn<Download, String> progressCol;
+    @FXML
+    private TableColumn<Download, String> urlCol;
+    @FXML
+    private TableColumn<Download, Download> actionsCol;
 
-    @FXML private Label Page_Name;
-    @FXML private VBox downloadsView;
-    @FXML private VBox settingsView;
-    @FXML private VBox aboutView;
+    @FXML
+    private Label Page_Name;
+    @FXML
+    private VBox downloadsView;
+    @FXML
+    private VBox settingsView;
+    @FXML
+    private VBox aboutView;
 
-    @FXML private TextField savePathField;
-    @FXML private RadioButton lightThemeRadio;
-    @FXML private RadioButton darkThemeRadio;
+    @FXML
+    private TextField savePathField;
+    @FXML
+    private RadioButton lightThemeRadio;
+    @FXML
+    private RadioButton darkThemeRadio;
 
     private final DAO dao = new DAO();
 
-    private final ObservableList<Download> downloadList =
-            FXCollections.observableArrayList();
+    private final ObservableList<Download> downloadList = FXCollections.observableArrayList();
 
     private int activeDownloadId = -1;
 
@@ -151,8 +168,7 @@ public class DownloadController implements Initializable {
     @FXML
     public void onPauseClicked() {
 
-        Download selected =
-                table.getSelectionModel().getSelectedItem();
+        Download selected = table.getSelectionModel().getSelectedItem();
 
         if (selected == null) {
             setStatus("Select a download first!");
@@ -164,8 +180,7 @@ public class DownloadController implements Initializable {
             return;
         }
 
-        DownloadInfo info =
-                DownloadInfo.activeDownloads.get(selected.getId());
+        DownloadInfo info = DownloadInfo.activeDownloads.get(selected.getId());
 
         if (info != null) {
 
@@ -188,8 +203,7 @@ public class DownloadController implements Initializable {
     @FXML
     public void onResumeClicked() {
 
-        Download selected =
-                table.getSelectionModel().getSelectedItem();
+        Download selected = table.getSelectionModel().getSelectedItem();
 
         if (selected == null) {
             setStatus("Select a download to resume!");
@@ -241,8 +255,7 @@ public class DownloadController implements Initializable {
 
     private void updateDownloadList(List<Download> newDownloads) {
 
-        java.util.Map<Integer, Download> existingMap =
-                new java.util.HashMap<>();
+        java.util.Map<Integer, Download> existingMap = new java.util.HashMap<>();
 
         for (Download d : downloadList) {
             existingMap.put(d.getId(), d);
@@ -250,22 +263,18 @@ public class DownloadController implements Initializable {
 
         for (Download newD : newDownloads) {
 
-            Download existing =
-                    existingMap.get(newD.getId());
+            Download existing = existingMap.get(newD.getId());
 
             if (existing != null) {
 
                 existing.setStatus(newD.getStatus());
                 existing.setProgress(newD.getProgress());
                 existing.setBytesDownloaded(
-                        newD.getBytesDownloaded()
-                );
+                        newD.getBytesDownloaded());
                 existing.setResumable(
-                        newD.isResumable()
-                );
+                        newD.isResumable());
                 existing.setFileName(
-                        newD.getFileName()
-                );
+                        newD.getFileName());
             }
         }
 
@@ -277,8 +286,7 @@ public class DownloadController implements Initializable {
 
             for (int j = i; j < downloadList.size(); j++) {
 
-                if (downloadList.get(j).getId()
-                        == newD.getId()) {
+                if (downloadList.get(j).getId() == newD.getId()) {
 
                     currentIndex = j;
                     break;
@@ -289,8 +297,7 @@ public class DownloadController implements Initializable {
 
                 if (currentIndex != i) {
 
-                    Download temp =
-                            downloadList.remove(currentIndex);
+                    Download temp = downloadList.remove(currentIndex);
 
                     downloadList.add(i, temp);
                 }
@@ -304,8 +311,7 @@ public class DownloadController implements Initializable {
         while (downloadList.size() > newDownloads.size()) {
 
             downloadList.remove(
-                    downloadList.size() - 1
-            );
+                    downloadList.size() - 1);
         }
     }
 
@@ -324,14 +330,12 @@ public class DownloadController implements Initializable {
             @Override
             protected Void call() {
 
-                DownloadInfo info =
-                        new DownloadInfo(
-                                d.getUrl(),
-                                dao,
-                                d.getId(),
-                                d.getBytesDownloaded(),
-                                d.getSavePath()
-                        );
+                DownloadInfo info = new DownloadInfo(
+                        d.getUrl(),
+                        dao,
+                        d.getId(),
+                        d.getBytesDownloaded(),
+                        d.getSavePath());
 
                 info.start();
 
@@ -369,36 +373,26 @@ public class DownloadController implements Initializable {
     private void setupTableColumns() {
 
         idCol.setCellValueFactory(
-                data -> data.getValue().idProperty()
-        );
+                data -> data.getValue().idProperty());
 
         fileCol.setCellValueFactory(
-                data -> data.getValue().fileNameProperty()
-        );
+                data -> data.getValue().fileNameProperty());
 
         statusCol.setCellValueFactory(
-                data -> data.getValue().statusProperty()
-        );
+                data -> data.getValue().statusProperty());
 
-        progressCol.setCellValueFactory(data ->
-                Bindings.createStringBinding(
-                        () -> String.format(
-                                "%.1f%%",
-                                data.getValue().getProgress()
-                        ),
-                        data.getValue().progressProperty()
-                )
-        );
+        progressCol.setCellValueFactory(data -> Bindings.createStringBinding(
+                () -> String.format(
+                        "%.1f%%",
+                        data.getValue().getProgress()),
+                data.getValue().progressProperty()));
 
         urlCol.setCellValueFactory(
-                data -> data.getValue().urlProperty()
-        );
+                data -> data.getValue().urlProperty());
 
         actionsCol.setCellValueFactory(
                 data -> new SimpleObjectProperty<>(
-                        data.getValue()
-                )
-        );
+                        data.getValue()));
 
         table.setItems(downloadList);
 
@@ -406,7 +400,8 @@ public class DownloadController implements Initializable {
                 .selectedItemProperty()
                 .addListener((obs, oldVal, selected) -> {
 
-                    if (selected == null) return;
+                    if (selected == null)
+                        return;
 
                     boolean hasActive = false;
 
@@ -425,8 +420,7 @@ public class DownloadController implements Initializable {
                         clearBindings();
 
                         setProgress(
-                                selected.getProgress() / 100.0
-                        );
+                                selected.getProgress() / 100.0);
 
                         setStatus(
                                 selected.getFileName()
@@ -434,10 +428,8 @@ public class DownloadController implements Initializable {
                                         + selected.getStatus()
                                         + " "
                                         + String.format(
-                                        "%.1f%%",
-                                        selected.getProgress()
-                                )
-                        );
+                                                "%.1f%%",
+                                                selected.getProgress()));
                     }
                 });
     }
@@ -448,304 +440,279 @@ public class DownloadController implements Initializable {
 
     private void setupActionsColumn() {
 
-    actionsCol.setCellFactory(col -> new TableCell<Download, Download>() {
+        actionsCol.setCellFactory(col -> new TableCell<Download, Download>() {
 
-        // =====================================================
-        // UI COMPONENTS
-        // =====================================================
+            // =====================================================
+            // UI COMPONENTS
+            // =====================================================
 
-        private final Button actionBtn = new Button("Actions ▾");
+            private final Button actionBtn = new Button("Actions ▾");
 
-        private final ContextMenu menu = new ContextMenu();
+            private final ContextMenu menu = new ContextMenu();
 
-        private final MenuItem pauseItem  = new MenuItem("⏸ Pause");
-        private final MenuItem resumeItem = new MenuItem("▶ Resume");
-        private final MenuItem cancelItem = new MenuItem("✗ Cancel");
-        private final MenuItem deleteItem = new MenuItem("🗑 Delete");
+            private final MenuItem pauseItem = new MenuItem("⏸ Pause");
+            private final MenuItem resumeItem = new MenuItem("▶ Resume");
+            private final MenuItem cancelItem = new MenuItem("✗ Cancel");
+            private final MenuItem deleteItem = new MenuItem("🗑 Delete");
 
-        {
-            // =================================================
-            // MENU SETUP
-            // =================================================
+            {
+                // =================================================
+                // MENU SETUP
+                // =================================================
 
-            menu.getItems().addAll(
-                pauseItem,
-                resumeItem,
-                cancelItem,
-                deleteItem
-            );
+                menu.getItems().addAll(
+                        pauseItem,
+                        resumeItem,
+                        cancelItem,
+                        deleteItem);
 
-            actionBtn.setFocusTraversable(false);
-            actionBtn.setPrefWidth(100);
+                actionBtn.setFocusTraversable(false);
+                actionBtn.setPrefWidth(100);
 
-            actionBtn.setOnAction(e ->
-                menu.show(actionBtn, Side.BOTTOM, 0, 0)
-            );
+                actionBtn.setOnAction(e -> menu.show(actionBtn, Side.BOTTOM, 0, 0));
 
-            // =================================================
-            // PAUSE ACTION
-            // =================================================
+                // =================================================
+                // PAUSE ACTION
+                // =================================================
 
-            pauseItem.setOnAction(e -> {
+                pauseItem.setOnAction(e -> {
 
-                Download d = getItem();
+                    Download d = getItem();
 
-                if (d == null) {
-                    return;
-                }
+                    if (d == null) {
+                        return;
+                    }
 
-                if (!"DOWNLOADING".equals(d.getStatus())) {
+                    if (!"DOWNLOADING".equals(d.getStatus())) {
+
+                        clearBindings();
+
+                        setStatus("Can only pause active downloads!");
+
+                        return;
+                    }
+
+                    DownloadInfo info = DownloadInfo.activeDownloads.get(d.getId());
+
+                    if (info != null) {
+
+                        info.togglePause();
+
+                        clearBindings();
+
+                        setStatus("⏸ Pausing: " + d.getFileName());
+
+                    } else {
+
+                        clearBindings();
+
+                        setStatus("Download not active!");
+                    }
+                });
+
+                // =================================================
+                // RESUME ACTION
+                // =================================================
+
+                resumeItem.setOnAction(e -> {
+
+                    Download d = getItem();
+
+                    if (d == null) {
+                        return;
+                    }
+
+                    if (!"PAUSED".equals(d.getStatus())) {
+
+                        clearBindings();
+
+                        setStatus("Can only resume paused downloads!");
+
+                        return;
+                    }
+
+                    resumeDownload(d);
+                });
+
+                // =================================================
+                // CANCEL ACTION
+                // =================================================
+
+                cancelItem.setOnAction(e -> {
+
+                    Download d = getItem();
+
+                    if (d == null) {
+                        return;
+                    }
+
+                    if ("COMPLETED".equals(d.getStatus())) {
+
+                        clearBindings();
+
+                        setStatus("Cannot cancel completed download!");
+
+                        return;
+                    }
+
+                    DownloadInfo info = DownloadInfo.activeDownloads.get(d.getId());
+
+                    if (info != null) {
+                        info.togglePause();
+                    }
+
+                    dao.updateStatus(d.getId(), "FAILED");
 
                     clearBindings();
 
-                    setStatus("Can only pause active downloads!");
+                    setStatus("✗ Cancelled: " + d.getFileName());
 
-                    return;
-                }
+                    onRefreshClicked();
+                });
 
-                DownloadInfo info =
-                    DownloadInfo.activeDownloads.get(d.getId());
+                // =================================================
+                // DELETE ACTION
+                // =================================================
 
-                if (info != null) {
+                deleteItem.setOnAction(e -> {
 
-                    info.togglePause();
+                    Download d = getItem();
 
-                    clearBindings();
+                    if (d == null) {
+                        return;
+                    }
 
-                    setStatus("⏸ Pausing: " + d.getFileName());
+                    DownloadInfo info = DownloadInfo.activeDownloads.get(d.getId());
 
-                } else {
+                    if (info != null) {
+                        info.togglePause();
+                    }
 
-                    clearBindings();
+                    dao.deleteDownload(d.getId());
 
-                    setStatus("Download not active!");
-                }
-            });
+                    // Delete local file
+                    java.io.File file = new java.io.File(d.getFileName());
 
-            // =================================================
-            // RESUME ACTION
-            // =================================================
-
-            resumeItem.setOnAction(e -> {
-
-                Download d = getItem();
-
-                if (d == null) {
-                    return;
-                }
-
-                if (!"PAUSED".equals(d.getStatus())) {
+                    if (file.exists()) {
+                        file.delete();
+                    }
 
                     clearBindings();
 
-                    setStatus("Can only resume paused downloads!");
+                    setStatus("🗑 Deleted: " + d.getFileName());
 
-                    return;
-                }
-
-                resumeDownload(d);
-            });
-
-            // =================================================
-            // CANCEL ACTION
-            // =================================================
-
-            cancelItem.setOnAction(e -> {
-
-                Download d = getItem();
-
-                if (d == null) {
-                    return;
-                }
-
-                if ("COMPLETED".equals(d.getStatus())) {
-
-                    clearBindings();
-
-                    setStatus("Cannot cancel completed download!");
-
-                    return;
-                }
-
-                DownloadInfo info =
-                    DownloadInfo.activeDownloads.get(d.getId());
-
-                if (info != null) {
-                    info.togglePause();
-                }
-
-                dao.updateStatus(d.getId(), "FAILED");
-
-                clearBindings();
-
-                setStatus("✗ Cancelled: " + d.getFileName());
-
-                onRefreshClicked();
-            });
-
-            // =================================================
-            // DELETE ACTION
-            // =================================================
-
-            deleteItem.setOnAction(e -> {
-
-                Download d = getItem();
-
-                if (d == null) {
-                    return;
-                }
-
-                DownloadInfo info =
-                    DownloadInfo.activeDownloads.get(d.getId());
-
-                if (info != null) {
-                    info.togglePause();
-                }
-
-                dao.deleteDownload(d.getId());
-
-                // Delete local file
-                java.io.File file =
-                    new java.io.File(d.getFileName());
-
-                if (file.exists()) {
-                    file.delete();
-                }
-
-                clearBindings();
-
-                setStatus("🗑 Deleted: " + d.getFileName());
-
-                onRefreshClicked();
-            });
-        }
-
-        // =====================================================
-        // CELL UPDATE
-        // =====================================================
-
-        @Override
-        protected void updateItem(Download d, boolean empty) {
-
-            super.updateItem(d, empty);
-
-            // IMPORTANT:
-            // Unbind old recycled bindings first
-            pauseItem.disableProperty().unbind();
-            resumeItem.disableProperty().unbind();
-            cancelItem.disableProperty().unbind();
-
-            pauseItem.styleProperty().unbind();
-            resumeItem.styleProperty().unbind();
-            cancelItem.styleProperty().unbind();
-
-            if (empty || d == null) {
-
-                setGraphic(null);
-
-                return;
+                    onRefreshClicked();
+                });
             }
 
-            // =================================================
-            // PAUSE BUTTON LOGIC
-            // Enabled ONLY when DOWNLOADING
-            // =================================================
+            // =====================================================
+            // CELL UPDATE
+            // =====================================================
 
-            pauseItem.disableProperty().bind(
+            @Override
+            protected void updateItem(Download d, boolean empty) {
 
-                Bindings.createBooleanBinding(
+                super.updateItem(d, empty);
 
-                    () ->
-                        !"DOWNLOADING".equals(d.getStatus()),
+                // IMPORTANT:
+                // Unbind old recycled bindings first
+                pauseItem.disableProperty().unbind();
+                resumeItem.disableProperty().unbind();
+                cancelItem.disableProperty().unbind();
 
-                    d.statusProperty()
-                )
-            );
+                pauseItem.styleProperty().unbind();
+                resumeItem.styleProperty().unbind();
+                cancelItem.styleProperty().unbind();
 
-            // =================================================
-            // RESUME BUTTON LOGIC
-            // Enabled ONLY when PAUSED
-            // =================================================
+                if (empty || d == null) {
 
-            resumeItem.disableProperty().bind(
+                    setGraphic(null);
 
-                Bindings.createBooleanBinding(
+                    return;
+                }
 
-                    () ->
-                        !"PAUSED".equals(d.getStatus()),
+                // =================================================
+                // PAUSE BUTTON LOGIC
+                // Enabled ONLY when DOWNLOADING
+                // =================================================
 
-                    d.statusProperty()
-                )
-            );
+                pauseItem.disableProperty().bind(
 
-            // =================================================
-            // CANCEL BUTTON LOGIC
-            // Enabled when DOWNLOADING or PAUSED
-            // =================================================
+                        Bindings.createBooleanBinding(
 
-            cancelItem.disableProperty().bind(
+                                () -> !"DOWNLOADING".equals(d.getStatus()),
 
-                Bindings.createBooleanBinding(
+                                d.statusProperty()));
 
-                    () ->
-                        !"DOWNLOADING".equals(d.getStatus())
-                        &&
-                        !"PAUSED".equals(d.getStatus()),
+                // =================================================
+                // RESUME BUTTON LOGIC
+                // Enabled ONLY when PAUSED
+                // =================================================
 
-                    d.statusProperty()
-                )
-            );
+                resumeItem.disableProperty().bind(
 
-            // =================================================
-            // VISUAL FADE / BLUR EFFECT
-            // =================================================
+                        Bindings.createBooleanBinding(
 
-            pauseItem.styleProperty().bind(
+                                () -> !"PAUSED".equals(d.getStatus()),
 
-                Bindings.createStringBinding(
+                                d.statusProperty()));
 
-                    () ->
-                        pauseItem.isDisable()
-                            ? "-fx-opacity: 0.45;"
-                            : "-fx-opacity: 1;",
+                // =================================================
+                // CANCEL BUTTON LOGIC
+                // Enabled when DOWNLOADING or PAUSED
+                // =================================================
 
-                    pauseItem.disableProperty()
-                )
-            );
+                cancelItem.disableProperty().bind(
 
-            resumeItem.styleProperty().bind(
+                        Bindings.createBooleanBinding(
 
-                Bindings.createStringBinding(
+                                () -> !"DOWNLOADING".equals(d.getStatus())
+                                        &&
+                                        !"PAUSED".equals(d.getStatus()),
 
-                    () ->
-                        resumeItem.isDisable()
-                            ? "-fx-opacity: 0.45;"
-                            : "-fx-opacity: 1;",
+                                d.statusProperty()));
 
-                    resumeItem.disableProperty()
-                )
-            );
+                // =================================================
+                // VISUAL FADE / BLUR EFFECT
+                // =================================================
 
-            cancelItem.styleProperty().bind(
+                pauseItem.styleProperty().bind(
 
-                Bindings.createStringBinding(
+                        Bindings.createStringBinding(
 
-                    () ->
-                        cancelItem.isDisable()
-                            ? "-fx-opacity: 0.45;"
-                            : "-fx-opacity: 1;",
+                                () -> pauseItem.isDisable()
+                                        ? "-fx-opacity: 0.45;"
+                                        : "-fx-opacity: 1;",
 
-                    cancelItem.disableProperty()
-                )
-            );
+                                pauseItem.disableProperty()));
 
-            // Delete always enabled
-            deleteItem.setDisable(false);
+                resumeItem.styleProperty().bind(
 
-            setGraphic(actionBtn);
-        }
-    });
-}
+                        Bindings.createStringBinding(
+
+                                () -> resumeItem.isDisable()
+                                        ? "-fx-opacity: 0.45;"
+                                        : "-fx-opacity: 1;",
+
+                                resumeItem.disableProperty()));
+
+                cancelItem.styleProperty().bind(
+
+                        Bindings.createStringBinding(
+
+                                () -> cancelItem.isDisable()
+                                        ? "-fx-opacity: 0.45;"
+                                        : "-fx-opacity: 1;",
+
+                                cancelItem.disableProperty()));
+
+                // Delete always enabled
+                deleteItem.setDisable(false);
+
+                setGraphic(actionBtn);
+            }
+        });
+    }
 
     // =========================================================
     // AUTO REFRESH
@@ -756,9 +723,7 @@ public class DownloadController implements Initializable {
         Timeline timeline = new Timeline(
                 new KeyFrame(
                         Duration.seconds(1),
-                        e -> onRefreshClicked()
-                )
-        );
+                        e -> onRefreshClicked()));
 
         timeline.setCycleCount(Animation.INDEFINITE);
 
@@ -770,8 +735,7 @@ public class DownloadController implements Initializable {
     // =========================================================
 
     private void updateProgressBar(
-            List<Download> downloads
-    ) {
+            List<Download> downloads) {
 
         Download active = null;
 
@@ -796,22 +760,17 @@ public class DownloadController implements Initializable {
 
                 progressBar.progressProperty().bind(
                         activeD.progressProperty()
-                                .divide(100.0)
-                );
+                                .divide(100.0));
 
                 statusLabel.textProperty().bind(
                         Bindings.createStringBinding(
-                                () ->
-                                        "Downloading: "
-                                                + activeD.getFileName()
-                                                + " "
-                                                + String.format(
+                                () -> "Downloading: "
+                                        + activeD.getFileName()
+                                        + " "
+                                        + String.format(
                                                 "%.1f%%",
-                                                activeD.getProgress()
-                                        ),
-                                activeD.progressProperty()
-                        )
-                );
+                                                activeD.getProgress()),
+                                activeD.progressProperty()));
             }
 
         } else {
@@ -823,17 +782,15 @@ public class DownloadController implements Initializable {
                 clearBindings();
             }
 
-            Download selected =
-                    table.getSelectionModel()
-                            .getSelectedItem();
+            Download selected = table.getSelectionModel()
+                    .getSelectedItem();
 
             if (selected != null) {
 
                 clearBindings();
 
                 setProgress(
-                        selected.getProgress() / 100.0
-                );
+                        selected.getProgress() / 100.0);
 
                 setStatus(
                         selected.getFileName()
@@ -841,10 +798,8 @@ public class DownloadController implements Initializable {
                                 + selected.getStatus()
                                 + " "
                                 + String.format(
-                                "%.1f%%",
-                                selected.getProgress()
-                        )
-                );
+                                        "%.1f%%",
+                                        selected.getProgress()));
 
             } else {
 
@@ -887,13 +842,11 @@ public class DownloadController implements Initializable {
 
         savePathField.setText(
                 download.manager.config.SettingsManager
-                        .getSavePath()
-        );
+                        .getSavePath());
 
         if ("dark".equals(
                 download.manager.config.SettingsManager
-                        .getTheme()
-        )) {
+                        .getTheme())) {
             darkThemeRadio.setSelected(true);
         } else {
             lightThemeRadio.setSelected(true);
@@ -915,42 +868,34 @@ public class DownloadController implements Initializable {
     @FXML
     public void onBrowseSavePathClicked() {
 
-        javafx.stage.DirectoryChooser chooser =
-                new javafx.stage.DirectoryChooser();
+        javafx.stage.DirectoryChooser chooser = new javafx.stage.DirectoryChooser();
 
         chooser.setTitle(
-                "Select Default Save Location"
-        );
+                "Select Default Save Location");
 
-        java.io.File dir =
-                chooser.showDialog(
-                        table.getScene().getWindow()
-                );
+        java.io.File dir = chooser.showDialog(
+                table.getScene().getWindow());
 
         if (dir != null) {
 
             savePathField.setText(
-                    dir.getAbsolutePath()
-            );
+                    dir.getAbsolutePath());
         }
     }
 
     @FXML
     public void onSaveSettingsClicked() {
 
-        String savePath =
-                savePathField.getText().trim();
+        String savePath = savePathField.getText().trim();
 
-        String theme =
-                darkThemeRadio.isSelected()
-                        ? "dark"
-                        : "light";
+        String theme = darkThemeRadio.isSelected()
+                ? "dark"
+                : "light";
 
         download.manager.config.SettingsManager
                 .saveSettings(savePath, theme);
 
-        javafx.scene.Scene scene =
-                table.getScene();
+        javafx.scene.Scene scene = table.getScene();
 
         if (scene != null) {
 
