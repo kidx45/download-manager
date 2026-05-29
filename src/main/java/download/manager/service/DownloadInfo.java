@@ -1,12 +1,16 @@
 package download.manager.service;
 
 import download.manager.model.Download;
+import download.manager.model.Chunk;
 import download.manager.storage.DAO;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -91,12 +95,16 @@ public class DownloadInfo {
             long fileSize = contentLength != null
                     ? Long.parseLong(contentLength)
                     : conn.getContentLengthLong();
+            // Remember to disconnect after getting the file size since we will reconnect in each thread to download byte ranges
+            // This is not the connection we will use for downloading, just a quick one to get the file size and check if the URL is valid
             conn.disconnect();
+
 
             if (fileSize <= 0) {
                 System.out.println("✗ Could not get file size.");
                 return;
             }
+
             System.out.printf("Size: %.2f MB%n", fileSize / (1024.0 * 1024.0));
 
             // Determine save path if it is new
@@ -106,16 +114,16 @@ public class DownloadInfo {
             // in case thought if it doesn't have one it will be assigned the current savePath
             // given by the user
             String saveDir = download.manager.config.SettingsManager.getSavePath();
-            java.io.File file;
+            File file;
             if (downloadId == -1) {
-                file = new java.io.File(saveDir, fileName);
+                file = new File(saveDir, fileName);
                 savePath = file.getAbsolutePath();
             } else {
                 if (savePath == null || savePath.isEmpty()) {
-                    file = new java.io.File(saveDir, fileName);
+                    file = new File(saveDir, fileName);
                     savePath = file.getAbsolutePath();
                 } else {
-                    file = new java.io.File(savePath);
+                    file = new File(savePath);
                 }
             }
 
@@ -143,61 +151,80 @@ public class DownloadInfo {
                 outputFile.setLength(fileSize);
             }
 
-            // STEP 6: Calculate chunks starting from where we left off
-            // If new: startFromByte = 0, downloads everything
-            // If resuming: for example startFromByte = 5000000, skips first 5MB
-            long remainingBytes = fileSize - startFromByte;
-            long chunkSize = remainingBytes / NUM_THREADS;
-            long remainder = remainingBytes % NUM_THREADS;
+            // STEP 6: Manage Chunks (New or Resume)
+            List<Chunk> chunks;
 
-            System.out.printf("Starting from byte %d (%.2f MB remaining)%n",
-                    startFromByte, remainingBytes / (1024.0 * 1024.0));
+            chunks = dao.getChunks(downloadId);
+            if (chunks.isEmpty()) {
+                // Create chunks if they don't exist (New download or corrupted state)
+                chunks = new ArrayList<>();
+                long chunkSize = fileSize / NUM_THREADS;
+                long remainder = fileSize % NUM_THREADS;
+                long start = 0;
+
+                for (int i = 0; i < NUM_THREADS; i++) {
+                    long end = (i == NUM_THREADS - 1)
+                            ? start + chunkSize + remainder - 1
+                            : start + chunkSize - 1;
+
+                    Chunk chunk = new Chunk(
+                            downloadId, start, end, start
+                    );
+                    dao.addChunk(chunk);
+                    chunks.add(chunk);
+                    start = end + 1;
+                }
+                // Refresh to get DB IDs
+                chunks = dao.getChunks(downloadId);
+            }
+
+            // Calculate total bytes already downloaded across all chunks
+            long totalDownloadedSoFar = 0;
+            for (Chunk c : chunks) {
+                totalDownloadedSoFar += (c.getCurrentByte() - c.getStartByte());
+            }
+
+            System.out.printf("Resuming from cumulative %.2f MB%n", totalDownloadedSoFar / (1024.0 * 1024.0));
 
             // STEP 7: Update DB to DOWNLOADING
             dao.updateStatus(downloadId, "DOWNLOADING");
 
             // STEP 8: Shared counter starts from bytes already downloaded
-            // It will check how much bytes have been downloaded and will keep track of
-            // each thread in the thread pool since each time we are updating th value by adding more
-            // bytes of data into the file
-            AtomicLong totalBytesDownloaded = new AtomicLong(startFromByte);
+            // It is such that the threads will not overlap the bytes each is downloading and locking it in their places 
+            AtomicLong totalBytesDownloaded = new AtomicLong(totalDownloadedSoFar);
 
             // STEP 9: Launch thread pool
-            ExecutorService threadPool = Executors.newFixedThreadPool(NUM_THREADS);
+            ExecutorService threadPool = Executors.newFixedThreadPool(chunks.size());
 
-            long start = startFromByte;
-            for (int i = 0; i < NUM_THREADS; i++) {
-                long end = (i == NUM_THREADS - 1)
-                        ? start + chunkSize + remainder - 1
-                        : start + chunkSize - 1;
-
-                threadPool.submit(new Downloader(
-                        url, start, end, i + 1,
-                        outputFile, dao, downloadId,
-                        totalBytesDownloaded, fileSize, this
-                ));
-
-                start = end + 1;
+            for (int i = 0; i < chunks.size(); i++) {
+                Chunk chunk = chunks.get(i);
+                
+                // Only start thread if chunk isn't finished
+                // This check is crucial for resuming downloads, so we don't waste threads on already completed chunks
+                if (chunk.getCurrentByte() <= chunk.getEndByte()) {
+                    threadPool.submit(new Downloader(
+                            url, chunk, i + 1,
+                            outputFile, dao, downloadId,
+                            totalBytesDownloaded, fileSize, this
+                    ));
+                }
             }
 
             // STEP 10: Wait for all threads to finish
-            // This will just initiate that wait not shutting it down
             threadPool.shutdown();
             boolean allDone = threadPool.awaitTermination(
                     Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 
             // STEP 11: Update final status
             if (allDone && !paused) {
-                // Fully completed — mark as done, disable resume
                 dao.markCompleted(downloadId);
+                dao.deleteChunks(downloadId); // Clean up chunks
                 System.out.println("✓ COMPLETED: " + fileName);
             } else if (paused) {
-                // Paused — save exactly where we stopped
-                long bytesSaved = totalBytesDownloaded.get();
-                dao.updateBytesDownloaded(downloadId, bytesSaved);
                 dao.updateStatus(downloadId, "PAUSED");
-                System.out.printf("⏸ PAUSED: %s at %.2f MB%n",
-                        fileName, bytesSaved / (1024.0 * 1024.0));
+                dao.updateBytesDownloaded(downloadId, totalBytesDownloaded.get());
+                // Individual chunk progress is already saved by Downloader threads
+                System.out.println("⏸ PAUSED: " + fileName);
             }
 
             outputFile.close();

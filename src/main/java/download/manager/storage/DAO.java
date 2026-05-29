@@ -2,6 +2,7 @@ package download.manager.storage;
 
 import download.manager.config.DB;
 import download.manager.model.Download;
+import download.manager.model.Chunk;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -127,6 +128,64 @@ public class DAO {
             System.out.println("✓ Download " + id + " deleted from DB");
         } catch (SQLException e) {
             System.out.println("✗ deleteDownload failed: " + e.getMessage());
+        }
+    }
+
+    // --- CHUNK METHODS ---
+
+    public void addChunk(Chunk chunk) {
+        String sql = "INSERT INTO download_chunks (download_id, start_byte, end_byte, current_byte) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, chunk.getDownloadId());
+            stmt.setLong(2, chunk.getStartByte());
+            stmt.setLong(3, chunk.getEndByte());
+            stmt.setLong(4, chunk.getCurrentByte());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("✗ addChunk failed: " + e.getMessage());
+        }
+    }
+
+    public List<Chunk> getChunks(int downloadId) {
+        List<Chunk> chunks = new ArrayList<>();
+        String sql = "SELECT * FROM download_chunks WHERE download_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, downloadId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Chunk c = new Chunk(
+                    rs.getInt("download_id"),
+                    rs.getLong("start_byte"),
+                    rs.getLong("end_byte"),
+                    rs.getLong("current_byte")
+                );
+                c.setId(rs.getInt("id"));
+                chunks.add(c);
+            }
+        } catch (SQLException e) {
+            System.out.println("✗ getChunks failed: " + e.getMessage());
+        }
+        return chunks;
+    }
+
+    public void updateChunkProgress(int chunkId, long currentByte) {
+        String sql = "UPDATE download_chunks SET current_byte = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, currentByte);
+            stmt.setInt(2, chunkId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("✗ updateChunkProgress failed: " + e.getMessage());
+        }
+    }
+
+    public void deleteChunks(int downloadId) {
+        String sql = "DELETE FROM download_chunks WHERE download_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, downloadId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("✗ deleteChunks failed: " + e.getMessage());
         }
     }
 }

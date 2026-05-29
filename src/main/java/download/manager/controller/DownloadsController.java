@@ -94,41 +94,42 @@ public class DownloadsController implements Initializable {
         t.start();
     }
 
-    @FXML public void onPauseClicked() {
-        Download selected = table.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            setStatus("Select a download first!");
-            return;
-        }
+    // Garbage code for pause/resume buttons in table rows, we will use the context menu in the actions column instead
+    // @FXML public void onPauseClicked() {
+    //     Download selected = table.getSelectionModel().getSelectedItem();
+    //     if (selected == null) {
+    //         setStatus("Select a download first!");
+    //         return;
+    //     }
 
-        if (!"DOWNLOADING".equals(selected.getStatus())) {
-            setStatus("Can only pause active downloads!");
-            return;
-        }
+    //     if (!"DOWNLOADING".equals(selected.getStatus())) {
+    //         setStatus("Can only pause active downloads!");
+    //         return;
+    //     }
 
-        DownloadInfo info = DownloadInfo.activeDownloads.get(selected.getId());
-        if (info != null) {
-            info.togglePause();
-            setStatus("⏸ Pausing: " + selected.getFileName());
-        } else {
-            setStatus("Download not active in memory!");
-        }
-    }
+    //     DownloadInfo info = DownloadInfo.activeDownloads.get(selected.getId());
+    //     if (info != null) {
+    //         info.togglePause();
+    //         setStatus("⏸ Pausing: " + selected.getFileName());
+    //     } else {
+    //         setStatus("Download not active in memory!");
+    //     }
+    // }
 
-    @FXML public void onResumeClicked() {
-        Download selected = table.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            setStatus("Select a download to resume!");
-            return;
-        }
+    // @FXML public void onResumeClicked() {
+    //     Download selected = table.getSelectionModel().getSelectedItem();
+    //     if (selected == null) {
+    //         setStatus("Select a download to resume!");
+    //         return;
+    //     }
 
-        if (!"PAUSED".equals(selected.getStatus())) {
-            setStatus("Can only resume paused downloads!");
-            return;
-        }
+    //     if (!"PAUSED".equals(selected.getStatus())) {
+    //         setStatus("Can only resume paused downloads!");
+    //         return;
+    //     }
 
-        resumeDownload(selected);
-    }
+    //     resumeDownload(selected);
+    // }
 
     @FXML public void onRefreshClicked() {
         Task<List<Download>> task = new Task<>() {

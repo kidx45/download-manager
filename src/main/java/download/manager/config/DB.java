@@ -73,6 +73,19 @@ public class DB {
             } catch (SQLException e) {
                 // Ignore: column already exists
             }
+
+            // --- ADD CHUNKS TABLE ---
+            String chunksSql = "CREATE TABLE IF NOT EXISTS download_chunks (" +
+                               "id INT PRIMARY KEY AUTO_INCREMENT," +
+                               "download_id INT," +
+                               "start_byte BIGINT," +
+                               "end_byte BIGINT," +
+                               "current_byte BIGINT," +
+                               "FOREIGN KEY (download_id) REFERENCES downloads(id) ON DELETE CASCADE" +
+                               ")";
+            stmt.execute(chunksSql);
+            System.out.println("✓ Chunks table ready!");
+
         } catch (SQLException e) {
             System.out.println("✗ Table creation failed: " + e.getMessage());
         }
